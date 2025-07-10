@@ -3,14 +3,3 @@ spring:
     active: dev
   application:
     name: customer-service
-
-  config:
-    import: optional:configserver:http://localhost:8888 # import config from config-server
-
-eureka:
-  instance:
-    hostname: localhost
-    prefer-ip-address: true
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka # register eureka server

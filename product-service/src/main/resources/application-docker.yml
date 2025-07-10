@@ -1,0 +1,14 @@
+
+# config import config-server
+spring:
+  config:
+    import: optional:configserver:http://config-server-service-docker:8888
+
+
+# register to eureka server or discovery server
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://eureka-server-service-docker:8761/eureka

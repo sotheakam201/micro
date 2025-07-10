@@ -1,0 +1,16 @@
+# import config server
+spring:
+  config:
+    import: optional:configserver:http://config-server-service-docker:8888
+
+# register to eureka server or discovery server
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://eureka-server-service-docker:8761/eureka
+  fetch-registry: true
+  register-with-eureka: true
+  registry-fetch-interval-seconds: 5 # Retry pulling registry every 5s if Eureka is down
+  initial-instance-info-replication-interval-seconds: 5 # Retry registration every 5s if Eureka is down
