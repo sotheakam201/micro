@@ -79,12 +79,13 @@ services:
     container_name: container_api_gateway
     ports:
       - "9091:9091"
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
     depends_on:
       - config-server-service-docker
       - eureka-server-service-docker
       - product-service
+      - customer-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - microservice-net
 
