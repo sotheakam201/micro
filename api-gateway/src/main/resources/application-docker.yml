@@ -9,7 +9,7 @@ eureka:
     prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://eureka-server-service-docker:8761/eureka
+      defaultZone: http://eureka-server-service-docker:8761/eureka/
   fetch-registry: true
   register-with-eureka: true
   registry-fetch-interval-seconds: 5 # Retry pulling registry every 5s if Eureka is down

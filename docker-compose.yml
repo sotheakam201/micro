@@ -21,10 +21,6 @@ services:
     container_name: container_product_service
     ports:
       - "8082:8082"
-    depends_on:
-      - config-server-service-docker
-      - eureka-server-service-docker
-      - db
     environment:
       - DB_HOST=db
       - DB_PORT=5432
@@ -32,7 +28,11 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres
       - MSG="Hello from Docker!"
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - config-server-service-docker
+      - eureka-server-service-docker
+      - db
     networks:
       - microservice-net
 
@@ -64,7 +64,7 @@ services:
       - DB_USERNAME=root          # ✅ Added!
       - DB_PASSWORD=mysql@12345
       - MSG="HELLO FROM DOCKER CUSTOMER JAVA"
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - db-mysql
       - config-server-service-docker
@@ -79,12 +79,12 @@ services:
     container_name: container_api_gateway
     ports:
       - "9091:9091"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     depends_on:
       - config-server-service-docker
       - eureka-server-service-docker
       - product-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
     networks:
       - microservice-net
 

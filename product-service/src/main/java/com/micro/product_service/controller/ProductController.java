@@ -11,7 +11,7 @@ import java.util.List;
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     @Value("${product.service.greeting}")
     private String greeting;

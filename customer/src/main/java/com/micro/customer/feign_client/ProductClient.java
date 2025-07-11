@@ -11,5 +11,4 @@ public interface ProductClient {
     @GetMapping("/api/products")
     List<ProductDTO> products();
 
-
 }
