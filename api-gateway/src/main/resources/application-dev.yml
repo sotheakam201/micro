@@ -13,3 +13,4 @@ eureka:
     fetch-registry: true # register to eureka server
     registry-fetch-interval-seconds: 5 # Retry pulling registry every 5s if Eureka is down
     initial-instance-info-replication-interval-seconds: 5 # Retry registration every 5s if Eureka is down
+

@@ -1,118 +1,115 @@
 services:
-  # create service name
-  db:
-    image: postgres:17
-    container_name: postgres-container-db
-    restart: always
-    environment:
-      POSTGRES_DB: product_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - microservice-net
-
-  # create service name
-  product-service:
-    build: ./product-service
-    container_name: container_product_service
-    ports:
-      - "8082:8082"
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_NAME=product_db
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
-      - MSG="Hello from Docker!"
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - config-server-service-docker
-      - eureka-server-service-docker
-      - db
-    networks:
-      - microservice-net
-
-  # create service name ( my-sql )
-  db-mysql:
-    image: mysql:8.0
-    container_name: container_db_mysql
-    restart: always
-    ports:
-      - "3309:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: mysql@12345
-      MYSQL_DATABASE: customer_db
-      MYSQL_USER: customer_user
-      MYSQL_PASSWORD: Hell0W0rld
-    networks:
-      - microservice-net
-
-  #create service name ( customer-service )
-  customer-service:
-    build: ./customer
-    container_name: container_customer
-    ports:
-      - "9999:9999"
-    environment:
-      - DB_HOST=db-mysql
-      - DB_PORT=3306
-      - DB_NAME=customer_db
-      - DB_USERNAME=root          # ✅ Added!
-      - DB_PASSWORD=mysql@12345
-      - MSG="HELLO FROM DOCKER CUSTOMER JAVA"
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - db-mysql
-      - config-server-service-docker
-      - eureka-server-service-docker
-    networks:
-      - microservice-net
-
-
-  # create service name
-  api-gateway:
-    build: ./api-gateway
-    container_name: container_api_gateway
-    ports:
-      - "9091:9091"
-    depends_on:
-      - config-server-service-docker
-      - eureka-server-service-docker
-      - product-service
-      - customer-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    networks:
-      - microservice-net
-
-  # create service name
-  eureka-server-service-docker:
-    build: ./eureka-server
-    container_name: container_eureka_server
-    ports:
-      - "8761:8761"
-    depends_on:
-      - config-server-service-docker
-    networks:
-      - microservice-net
-
-  # create service name
-  config-server-service-docker:
+  config-server:
     build: ./config-server
-    container_name: container_config_server
     ports:
       - "8888:8888"
     networks:
-      - microservice-net
+      - app-network
+    environment:
+      - spring.profiles.active=native
 
+  discovery-server:
+    build: ./eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:17
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mysql:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "8082:8082"
+    environment:
+      - DB_HOST=${PRODUCT_DB_HOST}
+      - DB_PORT=${PRODUCT_DB_PORT}
+      - DB_NAME=${PRODUCT_DB_NAME}
+      - DB_USERNAME=${PRODUCT_DB_USERNAME}
+      - DB_PASSWORD=${PRODUCT_DB_PASSWORD}
+      - MSG=${PRODUCT_MSG}
+      - SPRING_PROFILES_ACTIVE=${PRODUCT_PROFILE}
+    networks:
+      - app-network
+    depends_on:
+      - config-server
+      - discovery-server
+      - postgres
+
+  customer-service:
+    build: ./customer
+    ports:
+      - "9999:9999"
+    networks:
+      - app-network
+    depends_on:
+      - discovery-server
+      - config-server
+      - mysql
+    environment:
+      - DB_HOST=${CUSTOMER_DB_HOST}
+      - DB_PORT=${CUSTOMER_DB_PORT}
+      - DB_NAME=${CUSTOMER_DB_NAME}
+      - DB_USERNAME=${CUSTOMER_DB_USERNAME}
+      - DB_PASSWORD=${CUSTOMER_DB_PASSWORD}
+      - MSG=${CUSTOMER_MSG}
+      - SPRING_PROFILES_ACTIVE=${CUSTOMER_PROFILE}
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "9091:9091"
+    networks:
+      - app-network
+    depends_on:
+      - discovery-server
+      - config-server
+    environment:
+      - spring.profiles.active=${GATEWAY_PROFILE}
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.4
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - 9098:8080
+    networks:
+      - app-network
+    depends_on:
+      - postgres
 
 
 networks:
-  microservice-net:
+  app-network:
     driver: bridge
 
 volumes:

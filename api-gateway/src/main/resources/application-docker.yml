@@ -1,21 +1,15 @@
-
-# config import config-server
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://keycloak:9098/realms/micro-services"
   config:
-    import: optional:configserver:http://config-server-service-docker:8888
+    import: optional:configserver:http://config-server:8888
+  application:
+    name: api-gateway
 
-
-# register to eureka server or discovery server
 eureka:
-  instance:
-    prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://eureka-server-service-docker:8761/eureka
-
-
-#    fetch-registry: true
-#    register-with-eureka: true
-#    registry-fetch-interval-seconds: 5
-#    initial-instance-info-replication-interval-seconds: 5
-
+      defaultZone: http://discovery-server:8761/eureka

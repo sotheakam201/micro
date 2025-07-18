@@ -14,4 +14,4 @@ spring:
           search-locations:
             - classpath:/config/customer/
             - classpath:/config/product/
-            - classpath:/config/api_gateway/
+            - classpath:/config/api-gateway/
