@@ -39,7 +39,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3309:3306"
     networks:
       - app-network
 
@@ -90,6 +90,7 @@ services:
     depends_on:
       - discovery-server
       - config-server
+      - keycloak
     environment:
       - spring.profiles.active=${GATEWAY_PROFILE}
 
@@ -101,12 +102,11 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - 9098:8080
+      - "9090:8080"
     networks:
       - app-network
-    depends_on:
-      - postgres
-
+    volumes:
+      - keycloak_data:/opt/keycloak/data
 
 networks:
   app-network:
@@ -114,3 +114,4 @@ networks:
 
 volumes:
   postgres_data:
+  keycloak_data:
