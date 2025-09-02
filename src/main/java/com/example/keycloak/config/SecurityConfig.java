@@ -14,9 +14,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -30,16 +28,14 @@ public class SecurityConfig {
 //            new EndpointAccess("GET", "/api/products/**", "admin,hr"),
 //            new EndpointAccess("POST", "/api/products/**", "admin"),
 //            new EndpointAccess("DELETE", "/api/products/**", "admin"),
-//            new EndpointAccess("PUT", "/api/products/**", "admin"),
-//
-//            // Categories
+//            new EndpointAccess("PUT", "/api/products/**", "admin")
+
+            // Categories
 //            new EndpointAccess("GET", "/api/categories/**", "admin,hr"),
 //            new EndpointAccess("POST", "/api/categories/**", "admin,staff"),
 //            new EndpointAccess("DELETE", "/api/categories/**", "admin"),
 //            new EndpointAccess("PUT", "/api/categories/**", "admin")
 //    );
-
-
 
 
     @Bean
@@ -55,6 +51,17 @@ public class SecurityConfig {
                         .build())
                 .toList();
 
+        Map<String, Map<String, List<String>>> grouped = accessList.stream()
+                .collect(Collectors.groupingBy(
+                        EndpointAccess::getMethod,
+                        Collectors.groupingBy(
+                                EndpointAccess::getPattern,
+                                Collectors.mapping(
+                                        access -> access.getRoles().trim(),
+                                        Collectors.toList()
+                                )
+                        )
+                ));
 
         // 1. diable CSRF
         http.csrf(AbstractHttpConfigurer::disable);
@@ -67,15 +74,34 @@ public class SecurityConfig {
 
         // 4. Set Access Rules for URLs
         http.authorizeHttpRequests(auth -> {
-            for (EndpointAccess access : accessList) {
-                HttpMethod method = HttpMethod.valueOf(access.getMethod().toUpperCase());
-                String[] roles = Arrays.stream(access.getRoles().split(","))
-                        .map(String::trim)
-                        .toArray(String[]::new);
-                auth.requestMatchers(method, access.getPattern()).hasAnyRole(roles); // uses 'ROLE_' prefix automatically
-            }
+            grouped.forEach((method, patternMap) -> {
+                patternMap.forEach((pattern, roles) -> {
+                    auth.requestMatchers(HttpMethod.valueOf(method.toUpperCase()), pattern)
+                            .hasAnyRole(roles.toArray(new String[0]));
+                });
+            });
+
             auth.anyRequest().authenticated();
         });
+
+        // sample
+//        http.authorizeHttpRequests(auth -> auth
+//            // Products
+//            .requestMatchers(HttpMethod.GET, "/api/products/**").hasAnyRole("admin", "hr")
+//            .requestMatchers(HttpMethod.POST, "/api/products/**").hasAnyRole("admin")
+//            .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyRole("admin")
+//            .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyRole("admin")
+//
+//            // Categories
+//            .requestMatchers(HttpMethod.GET, "/api/categories/**").hasAnyRole("admin", "hr")
+//            .requestMatchers(HttpMethod.POST, "/api/categories/**").hasAnyRole("admin", "staff")
+//            .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyRole("admin")
+//            .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyRole("admin")
+//
+//            // Fallback
+//            .anyRequest().authenticated()
+//        );
+
 
         // 5. Enable JWT token ( Map JWT claims to Spring Security roles )
         http.oauth2ResourceServer(oauth2 -> oauth2

@@ -1,0 +1,47 @@
+services:
+
+
+  postgres:
+    image: postgres:17
+    ports:
+      - "5431:5432"
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: keycloak_user
+      POSTGRES_PASSWORD: keycloak@1234
+    volumes:
+      - pg_data_volumes:/var/lib/postgresql/data
+    networks:
+      - keycloak-net
+
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.2
+    ports:
+      - "9090:8080"
+    command:
+      - start-dev
+      - --features=preview
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: keycloak_db
+      KC_DB_USERNAME: keycloak_user
+      KC_DB_PASSWORD: keycloak@1234
+    depends_on:
+      - postgres
+    networks:
+      - keycloak-net
+    volumes:
+      - keycloak_value:/opt/keycloak/data
+
+networks:
+  keycloak-net:
+    driver: bridge
+
+
+volumes:
+  pg_data_volumes:
+  keycloak_value:
