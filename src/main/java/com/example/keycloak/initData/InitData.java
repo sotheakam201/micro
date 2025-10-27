@@ -8,7 +8,6 @@ import com.example.keycloak.feature.menu.repository.SubMenuRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 @Component
@@ -85,10 +84,8 @@ public class InitData {
                             permissionProduct.setRoles(List.of(role));
                             permissionRepository.save(permissionProduct);
                         }
-
                     }
                 }
-
             }
 
         }
