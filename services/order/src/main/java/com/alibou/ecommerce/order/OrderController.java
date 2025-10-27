@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderService service;
+    private final OrderService orderService;
 
     @PostMapping
     public ResponseEntity<Integer> createOrder(
@@ -25,18 +25,18 @@ public class OrderController {
     ) {
 
         System.out.println("fffffffffffffffff");
-        return ResponseEntity.ok(this.service.createOrder(request));
+        return ResponseEntity.ok(orderService.createOrder(request));
     }
 
     @GetMapping
     public ResponseEntity<List<OrderResponse>> findAll() {
-        return ResponseEntity.ok(this.service.findAllOrders());
+        return ResponseEntity.ok(orderService.findAllOrders());
     }
 
     @GetMapping("/{order-id}")
     public ResponseEntity<OrderResponse> findById(
             @PathVariable("order-id") Integer orderId
     ) {
-        return ResponseEntity.ok(this.service.findById(orderId));
+        return ResponseEntity.ok(orderService.findById(orderId));
     }
 }
