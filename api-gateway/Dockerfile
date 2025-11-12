@@ -8,7 +8,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run with JRE
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
@@ -16,4 +16,3 @@ COPY --from=build /app/target/*.jar app.jar
 EXPOSE 9091
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
-

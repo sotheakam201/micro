@@ -121,7 +121,7 @@ services:
       KC_DB_URL_DATABASE: ${KC_DB}
       KC_DB_USERNAME: ${KC_USER}
       KC_DB_PASSWORD: ${KC_PASSWORD}
-      KC_HOSTNAME: keycloak
+      KC_HOSTNAME: localhost
     ports:
       - "9090:8080"
     depends_on:
