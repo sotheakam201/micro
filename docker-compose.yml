@@ -131,6 +131,15 @@ services:
     volumes:
       - keycloak_data:/opt/keycloak/data
 
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - app-network
+
+
 networks:
   app-network:
     driver: bridge
