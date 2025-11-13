@@ -14,7 +14,7 @@ import java.util.List;
 public class CustomerController {
 
     @Autowired
-    private  ProductClient productClient;
+    private ProductClient productClient;
 
     @Value("${customer.service.greeting}")
     private String greeting;
