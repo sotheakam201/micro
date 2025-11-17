@@ -26,6 +26,7 @@ public class CustomerController {
 
     @GetMapping("/products")
     public List<ProductDTO> products(){
+        System.out.println("11111111111111111111111111111111");
         return  productClient.products();
     }
 }

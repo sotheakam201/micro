@@ -6,13 +6,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-@Configuration
-public class FeignClientConfig implements RequestInterceptor {
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
-    @Override
-    public void apply(RequestTemplate template) {
-        // Replace with your token logic
-        String token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJSU28yTXlwaWZzOHVxRkQ1QlFwemRiaVM2bmJiYlFTQXVxMzV2YlhmRDJ3In0.eyJleHAiOjE3NTMxNjc0MTMsImlhdCI6MTc1MzE2NzExMywianRpIjoiODQwOGQyNzctNzI5Yy00NjNmLWE2Y2MtZGFlYzNkNGQxZWQxIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo5MDkwL3JlYWxtcy9kZW1vIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjZhMjJhNTliLTMyZGMtNDZjOS04YTQ4LTFhOWY3MGRkNjI4YSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImRlbW8iLCJzZXNzaW9uX3N0YXRlIjoiYWYzMzYxNWYtNjI4Yy00YmQyLWEyMDctYWY0NDEyMWI0YjY3IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtZGVtbyJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImRlbW8iOnsicm9sZXMiOlsicm9sZV9hZG1pbiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiYWYzMzYxNWYtNjI4Yy00YmQyLWEyMDctYWY0NDEyMWI0YjY3IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiAwMSIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIiwiZ2l2ZW5fbmFtZSI6ImFkbWluIiwiZmFtaWx5X25hbWUiOiIwMSIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIn0.m-k0GCSIBLMacjixwAdHCDfo7BDPzjFaWIOFIXGFD7tDrn53n-IvfdOuKMie6-b69LdOPVG4GaXF_deJaj7e99CCN0UBuwbMndvl7AtVooZwuiJ3pVQ0UmlvWeF_AQMxWkjCKAZ_QLfTd3k-cEaEhWDv0UVyAWx1W8nKLRsDILIa5iR876rxpl-RpyJDF9-aoEI3xFcask3DbxkYI60kIHQncYR8IJEXg8lYDmoIOgyXpsAE2fMFPk4xkpYJ_wxBAnNnXmYVe0TTT8uKmkon7OKjENJf0W4O9Cbq5N_5XOprPPJzM-VevQb3TWISUmyUNWT5hlLOU0deiA7RXxvQlQ";
-        template.header("Authorization", "Bearer " + token);
+@Configuration
+public class FeignClientConfig  {
+
+    @Bean
+    public RequestInterceptor requestInterceptor() {
+        return requestTemplate -> {
+            Authentication authentication = SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
+
+            if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+                String token = jwtAuth.getToken().getTokenValue();
+                requestTemplate.header("Authorization", "Bearer " + token);
+            }
+        };
     }
 }
