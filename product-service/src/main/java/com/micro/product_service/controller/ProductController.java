@@ -1,5 +1,7 @@
 package com.micro.product_service.controller;
 
+import com.micro.product_service.feign_client.CustomerClient;
+import com.micro.product_service.feign_client.CustomerDTO;
 import com.micro.product_service.model.Product;
 import com.micro.product_service.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductRepository productRepository;
+    private final CustomerClient customerClient;
 
     @Value("${product.service.greeting}")
     private String greeting;
@@ -29,6 +32,11 @@ public class ProductController {
     @GetMapping("/greeting")
     public String greeting(){
         return greeting;
+    }
+
+    @GetMapping("/read-customer")
+    public List<CustomerDTO> customer(){
+        return customerClient.read();
     }
 }
 

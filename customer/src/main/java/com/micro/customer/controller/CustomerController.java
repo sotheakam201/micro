@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,7 +27,23 @@ public class CustomerController {
 
     @GetMapping("/products")
     public List<ProductDTO> products(){
-        System.out.println("11111111111111111111111111111111");
         return  productClient.products();
+    }
+
+    @GetMapping
+    public List<CustomerDTO> read(){
+        List<CustomerDTO> customerDTOS = new ArrayList<>();
+
+        customerDTOS.add(CustomerDTO.builder()
+                        .id(1)
+                        .name("sothea")
+                .build());
+
+        customerDTOS.add(CustomerDTO.builder()
+                .id(2)
+                .name("channa")
+                .build());
+
+        return customerDTOS;
     }
 }

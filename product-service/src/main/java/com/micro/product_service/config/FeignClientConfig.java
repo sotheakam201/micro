@@ -1,4 +1,4 @@
-package com.micro.customer.config;
+package com.micro.product_service.config;
 
 import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
