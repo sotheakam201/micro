@@ -9,6 +9,7 @@
         <module name="api-gateway" />
         <module name="config-server" />
         <module name="eureka-server" />
+        <module name="gateway" />
       </profile>
       <profile name="Annotation profile for product-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -28,6 +29,7 @@
       <module name="config-server" options="-parameters" />
       <module name="customer" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="product-service" options="-parameters" />
     </option>
   </component>

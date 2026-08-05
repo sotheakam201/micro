@@ -5,19 +5,29 @@ import com.micro.product_service.feign_client.CustomerDTO;
 import com.micro.product_service.model.Product;
 import com.micro.product_service.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class ProductController {
-    private final ProductRepository productRepository;
-    private final CustomerClient customerClient;
 
-    @Value("${product.service.greeting}")
-    private String greeting;
+    private final ProductRepository productRepository;
+
+    @Autowired
+    private CustomerClient customerClient;
+
+    public ProductController(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+//    @Value("${product.service.greeting}")
+//    private String greeting;
+//
+
 
     @GetMapping
     public List<Product> getAllProducts() {
@@ -29,10 +39,10 @@ public class ProductController {
         return productRepository.save(product);
     }
 
-    @GetMapping("/greeting")
-    public String greeting(){
-        return greeting;
-    }
+//    @GetMapping("/greeting")
+//    public String greeting(){
+//        return greeting;
+//    }
 
     @GetMapping("/read-customer")
     public List<CustomerDTO> customer(){

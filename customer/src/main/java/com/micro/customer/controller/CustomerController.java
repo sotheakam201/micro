@@ -17,7 +17,7 @@ public class CustomerController {
     @Autowired
     private ProductClient productClient;
 
-    @Value("${customer.service.greeting}")
+    @Value("${customer.service.greeting:${MSG:Hello from Customer Service}}")
     private String greeting;
 
     @GetMapping("/hello")

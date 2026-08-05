@@ -1,11 +1,11 @@
 spring:
   profiles:
-    active: dev
+    active: docker
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/demo
+#          issuer-uri: http://keycloak:8080/realms/demo
           jwk-set-uri: http://keycloak:8080/realms/demo/protocol/openid-connect/certs
 #          issuer-uri: http://localhost:8080/realms/demo
 #          jwk-set-uri: http://localhost:8080/realms/demo/protocol/openid-connect/certs
@@ -15,6 +15,14 @@ spring:
 
 #  zipkin:
 #    base-url: http://zipkin:9411
+
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
 
 
 jwt:

@@ -1,11 +1,11 @@
 spring:
   profiles:
-    active: dev
+    active: docker
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/demo
+#          issuer-uri: http://localhost:8080/realms/demo
           jwk-set-uri: http://keycloak:8080/realms/demo/protocol/openid-connect/certs
 #          issuer-uri: http://localhost:8080/realms/demo
 #          jwk-set-uri: http://localhost:8080/realms/demo/protocol/openid-connect/certs
