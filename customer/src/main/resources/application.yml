@@ -13,3 +13,19 @@ spring:
 
   application:
     name: customer-service
+
+
+security:
+  rules:
+    - method: POST
+      path: "/api/customers/users"
+      role: "user:create"
+    - method: GET
+      path: "/api/customers/users"
+      role: "user:read"
+    - method: PUT
+      path: "/api/customers/users/**"
+      role: "user:edit"
+    - method: DELETE
+      path: "/api/customers/users/**"
+      role: "user:delete"
